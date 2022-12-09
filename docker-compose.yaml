@@ -1,0 +1,8 @@
+services:
+  sale_system_next:
+    image: mongo:5.0.0
+    container_name: back_sale_system_next
+    ports:
+      - 27017:27017
+    volumes:
+      - ./mongo:/data/db

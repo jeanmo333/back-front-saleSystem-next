@@ -120,11 +120,11 @@ const registerUser = async (
   //send mail
 
   // Enviar el email
-  emailRegister({
-    email,
-    name,
-    token: newUser.token,
-  });
+  // emailRegister({
+  //   email,
+  //   name,
+  //   token: newUser.token,
+  // });
 
   const { _id, role } = newUser;
 

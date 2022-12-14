@@ -6,7 +6,7 @@ import { getUser } from "../../../utils/getUser";
 import jwt from 'jsonwebtoken';
 import console from "console";
 import { jwtVerify } from 'jose';
-import { Customer } from "../../../models";
+import { Customer, User } from "../../../models";
 import { ICustomer } from "../../../interfaces";
 
 type Data = { message: string } | { customerSave: ICustomer } | ICustomer[];
@@ -100,6 +100,14 @@ const registerCustomer = async (
   if (customerweb) {
     return res.status(400).json({
       message: "Web Cliente ya existe",
+    });
+  }
+
+
+  const customerUser = await User.findOne({ _id: user });
+  if (!customerUser) {
+    return res.status(400).json({
+      message: "usuario no existe",
     });
   }
 

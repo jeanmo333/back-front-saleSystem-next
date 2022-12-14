@@ -3,42 +3,22 @@ import { IProduct } from '../interfaces';
 
 
 const productSchema = new Schema({
-    description: { type: String, required: true, default: '' },
-    images: [{ type: String }],
+    name: { type: String, required: true, unique: true }, 
+    description: { type: String, required: true, },
+    purchase_price: { type: Number, required: true, default: 0 },
+    sale_price: { type: Number, required: true, default: 0 },
     inStock: { type: Number, required: true, default: 0 },
-    price: { type: Number, required: true, default: 0 },
-    sizes: [{
-        type: String,
-        enum: {
-            values: ['XS','S','M','L','XL','XXL','XXXL'],
-            message: '{VALUE} no es un tamaño válido'
-        }
-    }],
-    slug: { type: String, required: true, unique: true },
-    tags: [{ type: String }],
-    title: { type: String, required: true, default: '' },
-    type: {
-        type: String,
-        enum: {
-            values: ['shirts','pants','hoodies','hats'],
-            message: '{VALUE} no es un tipo válido'
-        },
-        default: 'shirts'
-    },
-    gender: {
-        type: String,
-        enum: {
-            values: ['men','women','kid','unisex'],
-            message: '{VALUE} no es un genero válido'
-        },
-        default: 'women'
-    }
+    isActive: {type: Boolean, default: true },
+    category: { type: Schema.Types.ObjectId, ref: 'Category'},
+    user: { type: Schema.Types.ObjectId, ref: 'User'},
+    supplier: { type: Schema.Types.ObjectId, ref: 'Supplier'},
+    
 },{
     timestamps: true
 });
 
 
-productSchema.index({ title: 'text', tags: 'text' });
+productSchema.index({ name: 'text'});
 
 
 const Product: Model<IProduct> = mongoose.models.Product || model('Product', productSchema );

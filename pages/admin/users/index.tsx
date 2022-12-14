@@ -20,10 +20,10 @@ const UsersPage = () => {
 
 
   const rows = users!.map((user) => ({
-    id: user.id,
+    id: user._id,
     name: user.name,
     email: user.email,
-    roles: user.roles,
+    role: user.role,
   }));
 
 

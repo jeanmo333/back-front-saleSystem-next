@@ -42,14 +42,16 @@ const loginUser = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
     return res.status(400).json({ message: "Correo o contraseña no válidos" });
   }
 
-  // Comprobar si el usuario esta confirmado
-  if (!user.isActive) {
-    return res.status(400).json({ message: "Tu Cuenta no ha sido confirmada" });
-  }
+
 
   if (!bcrypt.compareSync(password, user.password!)) {
     return res.status(400).json({ message: "Correo o contraseña no válidos" });
   }
+
+    // Comprobar si el usuario esta confirmado
+    if (!user.isActive) {
+      return res.status(400).json({ message: "Tu Cuenta no ha sido confirmada" });
+    }
 
   const { role, name, _id } = user;
 

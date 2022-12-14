@@ -1,24 +1,35 @@
 import { useRouter } from "next/router";
-import { Box, Button, Grid, TextField, Typography } from "@mui/material";
+import {
+  Autocomplete,
+  Box,
+  Button,
+  Grid,
+  TextField,
+  Typography,
+} from "@mui/material";
 import React from "react";
 import { useForm } from "react-hook-form";
 import { FormLayout } from "../../../components/layouts/FormLayout";
 import Swal from "sweetalert2";
 
-import { useCustomers } from "../../../hooks/useCustomers";
+import { useAuth, useProducts, useSuppliers } from "../../../hooks";
 
 type FormData = {
   name: string;
-  email: string;
-  phone: string;
-  rut: string;
-  web: string;
-  address2: string;
+  description?: string;
+  purchase_price: number;
+  sale_price: number;
+  inStock: number;
+  category: string;
+  supplier: string;
+  user: string;
 };
 
-const NewCustomer = () => {
+const NewProduct = () => {
+  const { auth } = useAuth();
   const router = useRouter();
-  const { registerCustomer } = useCustomers();
+  const { suppliers } = useSuppliers();
+  const { registerProduct } = useProducts();
 
   const {
     register,
@@ -27,29 +38,33 @@ const NewCustomer = () => {
   } = useForm<FormData>({
     defaultValues: {
       name: "",
-      email: "",
-      phone: "",
-      rut: "",
-      web: "",
-      address2: "",
+      description: "",
+      purchase_price: 0,
+      sale_price: 0,
+      inStock: 0,
+      category: "",
+      supplier: "",
+      user: auth?.name,
     },
   });
 
   const onRegisterCustomer = async ({
     name,
-    email,
-    phone,
-    rut,
-    web,
-    address2,
+    description,
+    purchase_price,
+    sale_price,
+    inStock,
+    category,
+    supplier,
   }: FormData) => {
-    const { hasError, message } = await registerCustomer({
+    const { hasError, message } = await registerProduct({
       name,
-      email,
-      phone,
-      rut,
-      address2,
-      web,
+      description,
+      purchase_price,
+      sale_price,
+      inStock,
+      category,
+      supplier,
     });
     if (!hasError) {
       Swal.fire({
@@ -87,13 +102,13 @@ const NewCustomer = () => {
           <Grid container spacing={2} className="fadeIn">
             <Grid item xs={12}>
               <Typography variant="h1" component="h1" textAlign={"center"}>
-                Agregar Cliente
+                Agregar Producto
               </Typography>
             </Grid>
 
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Nombre cliente"
+                label="Nombre producto"
                 variant="outlined"
                 fullWidth
                 {...register("name", {
@@ -107,70 +122,111 @@ const NewCustomer = () => {
 
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Email"
+                label="Descripcion"
                 variant="outlined"
-                type="email"
+                type="text"
                 fullWidth
-                {...register("email", {
+                {...register("description", {
                   required: "Este campo es requerido",
                 })}
-                error={!!errors.email}
-                helperText={errors.email?.message}
+                error={!!errors.description}
+                helperText={errors.description?.message}
               />
             </Grid>
 
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Telefono"
+                label="Precio Compra"
                 variant="outlined"
                 type="phone"
                 fullWidth
-                {...register("phone", {
+                {...register("purchase_price", {
                   required: "Este campo es requerido",
                 })}
-                error={!!errors.phone}
-                helperText={errors.phone?.message}
+                error={!!errors.purchase_price}
+                helperText={errors.purchase_price?.message}
               />
             </Grid>
 
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Rut"
+                label="Precio Venta"
                 variant="outlined"
                 fullWidth
-                {...register("rut", {
+                {...register("sale_price", {
                   required: "Este campo es requerido",
                 })}
-                error={!!errors.rut}
-                helperText={errors.rut?.message}
+                error={!!errors.sale_price}
+                helperText={errors.sale_price?.message}
               />
             </Grid>
 
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Web"
+                label="Stock"
                 variant="outlined"
                 fullWidth
-                {...register("web", {
+                {...register("inStock", {
                   required: "Este campo es requerido",
                 })}
-                error={!!errors.web}
-                helperText={errors.web?.message}
+                error={!!errors.inStock}
+                helperText={errors.inStock?.message}
               />
             </Grid>
 
             <Grid item xs={12} sm={6}>
               <TextField
-                label="Direccion"
+                label="Buscar Categoria"
                 variant="outlined"
                 fullWidth
-                {...register("address2", {
+                {...register("category", {
                   required: "Este campo es requerido",
                 })}
-                error={!!errors.address2}
-                helperText={errors.address2?.message}
+                error={!!errors.category}
+                helperText={errors.category?.message}
               />
             </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Buscar proveedor"
+                variant="outlined"
+                fullWidth
+                {...register("supplier", {
+                  required: "Este campo es requerido",
+                })}
+                error={!!errors.supplier}
+                helperText={errors.supplier?.message}
+              />
+            </Grid>
+
+            <Grid item xs={12} sm={6}>
+              <TextField
+                label="Usuario"
+                variant="outlined"
+                fullWidth
+                {...register("user", {
+                  required: "Este campo es requerido",
+                })}
+                error={!!errors.user}
+                helperText={errors.user?.message}
+              />
+            </Grid>
+
+            {/**
+                 <Grid item xs={12} sm={6}>
+              <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                options={suppliers!}
+                sx={{ width: 300 }}
+                renderInput={(params) => (
+                  <TextField {...params} label="Movie" />
+                 
+                )}
+              />
+            </Grid>
+               */}
 
             <Grid item xs={12}>
               <Button
@@ -179,7 +235,7 @@ const NewCustomer = () => {
                 className="circular-btn"
                 size="large"
                 fullWidth>
-                Crear Cliente
+                Crear Producto
               </Button>
             </Grid>
           </Grid>
@@ -189,4 +245,4 @@ const NewCustomer = () => {
   );
 };
 
-export default NewCustomer;
+export default NewProduct;

@@ -1,10 +1,10 @@
 import { useRouter } from "next/router";
 import { Box, Button, Grid, TextField, Typography } from "@mui/material";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { useForm } from "react-hook-form";
 import { FormLayout } from "../../../components/layouts/FormLayout";
 import Swal from "sweetalert2";
-
+import { GetServerSideProps, NextPage } from "next";
 import { useCustomers } from "../../../hooks/useCustomers";
 
 type FormData = {
@@ -16,13 +16,18 @@ type FormData = {
   address2: string;
 };
 
-const NewCustomer = () => {
+type Props = {
+  _id: string;
+};
+
+const EditProduct: NextPage<Props> = ({ _id }) => {
   const router = useRouter();
-  const { registerCustomer } = useCustomers();
+  const { getCustomer, updateCustomer } = useCustomers();
 
   const {
     register,
     handleSubmit,
+    setValue,
     formState: { errors },
   } = useForm<FormData>({
     defaultValues: {
@@ -35,7 +40,22 @@ const NewCustomer = () => {
     },
   });
 
-  const onRegisterCustomer = async ({
+  useEffect(() => {
+    (async () => {
+      if (_id) {
+        const { customer } = await getCustomer(_id);
+        if (customer?.name === undefined) return;
+        setValue("name", customer!.name);
+        setValue("email", customer!.email);
+        setValue("phone", customer!.phone);
+        setValue("rut", customer!.rut);
+        setValue("web", customer!.web);
+        setValue("address2", customer!.address2);
+      }
+    })();
+  }, [router]);
+
+  const onUpdateCustomer = async ({
     name,
     email,
     phone,
@@ -43,7 +63,8 @@ const NewCustomer = () => {
     web,
     address2,
   }: FormData) => {
-    const { hasError, message } = await registerCustomer({
+    const { hasError, message } = await updateCustomer({
+      _id,
       name,
       email,
       phone,
@@ -77,7 +98,7 @@ const NewCustomer = () => {
 
   return (
     <FormLayout title="">
-      <form onSubmit={handleSubmit(onRegisterCustomer)} noValidate>
+      <form onSubmit={handleSubmit(onUpdateCustomer)} noValidate>
         <Box
           sx={{
             width: { xs: 350, sm: 600 },
@@ -87,7 +108,7 @@ const NewCustomer = () => {
           <Grid container spacing={2} className="fadeIn">
             <Grid item xs={12}>
               <Typography variant="h1" component="h1" textAlign={"center"}>
-                Agregar Cliente
+                Editando Cliente
               </Typography>
             </Grid>
 
@@ -179,7 +200,7 @@ const NewCustomer = () => {
                 className="circular-btn"
                 size="large"
                 fullWidth>
-                Crear Cliente
+                Editar cliente
               </Button>
             </Grid>
           </Grid>
@@ -189,4 +210,16 @@ const NewCustomer = () => {
   );
 };
 
-export default NewCustomer;
+export const getServerSideProps: GetServerSideProps = async ({
+  req,
+  query,
+}) => {
+  const { _id = "" } = query;
+  return {
+    props: {
+      _id,
+    },
+  };
+};
+
+export default EditProduct;

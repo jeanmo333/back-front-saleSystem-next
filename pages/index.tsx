@@ -13,12 +13,11 @@ import {
 import { ErrorOutline } from "@mui/icons-material";
 import { useForm } from "react-hook-form";
 
-import { AuthContext } from "../context/auth";
 import { AuthLayout } from "../components/layouts";
 import { validations } from "../utils";
-import router, { useRouter } from "next/router";
-import { FullScreenLoading } from "../components/ui/FullScreenLoading";
-import { GetServerSideProps } from "next";
+import { useRouter } from "next/router";
+import { useAuth } from "../hooks";
+import { CircularLoading } from "../components/ui/CircularLoading";
 
 type FormData = {
   email: string;
@@ -27,12 +26,10 @@ type FormData = {
 
 const LoginPage = () => {
   const router = useRouter();
-  const { loginUser } = useContext(AuthContext);
+  const { loading, loginUser,  setLoading} = useAuth();
   const [errorMessage, setErrorMessage] = useState("");
   const [showError, setShowError] = useState(false);
-
-  //const { isLoading } = useContext(AuthContext);
-
+  
   const {
     register,
     handleSubmit,
@@ -42,7 +39,7 @@ const LoginPage = () => {
 
   const onLoginUser = async ({ email, password }: FormData) => {
     setShowError(false);
-
+    setLoading(true)
     const { hasError, message } = await loginUser(email, password);
 
     if (hasError) {
@@ -50,13 +47,11 @@ const LoginPage = () => {
       setErrorMessage(message!);
       setTimeout(() => setShowError(false), 10000);
       reset();
+      setLoading(false)
       return;
     }
-    //router.reload();
     router.push("/admin");
   };
-
-  //if(!isLoading) return <>< FullScreenLoading/></>
 
   return (
     <AuthLayout title={"Ingresar"}>
@@ -117,7 +112,7 @@ const LoginPage = () => {
                 className="circular-btn"
                 size="large"
                 fullWidth>
-                Iniciar Sesión
+                 {loading ? <CircularLoading/> : "Iniciar Sesión"}  
               </Button>
             </Grid>
 

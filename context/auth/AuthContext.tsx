@@ -1,4 +1,4 @@
-import { createContext } from "react";
+import { createContext, Dispatch, SetStateAction } from "react";
 import { IUser } from "../../interfaces";
 
 interface ContextProps {
@@ -6,6 +6,9 @@ interface ContextProps {
   users?: IUser[] | undefined;
 
   auth: IUser | undefined;
+  loading: boolean;
+
+  setLoading: Dispatch<SetStateAction<boolean>>
 
   loginUser: (
     email: string,

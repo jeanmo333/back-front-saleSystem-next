@@ -4,7 +4,12 @@ import { IProduct } from "../../interfaces";
 interface ContextProps {
   products?: IProduct[];
 
-  getProducts: () => void;
+  registerProduct: (product: IProduct) => Promise<{
+    hasError?: boolean;
+    message?: string;
+}>;
+
+
 }
 
 export const ProductContext = createContext({} as ContextProps);

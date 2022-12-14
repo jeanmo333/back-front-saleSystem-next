@@ -3,7 +3,8 @@ import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../database";
 import { ICategory } from "../../../interfaces/category";
 import console from "console";
-import { Category } from "../../../models";
+import { Category, User } from "../../../models";
+import mongoose from "mongoose";
 
 type Data = { message: string } | { categorySave: ICategory } | ICategory[];
 
@@ -50,12 +51,25 @@ const registerCategory = async (
 
   //const user  = getUser(token) as unknown as string;
 
+  if (!mongoose.Types.ObjectId.isValid(user)) {
+    return res.status(400).json({
+      message: "Usuario no valido",
+    });
+  }
+
   await db.connect();
   const categoryName = await Category.findOne({ name });
 
   if (categoryName) {
     return res.status(400).json({
       message: "Categoria ya existe",
+    });
+  }
+
+  const categoryUser = await User.findOne({ _id: user });
+  if (!categoryUser) {
+    return res.status(400).json({
+      message: "usuario no existe",
     });
   }
 

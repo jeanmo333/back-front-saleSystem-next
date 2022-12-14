@@ -74,7 +74,7 @@ const SupplierPage = () => {
       icon={< PeopleAlt />}>
       
       <Box display="flex" justifyContent="end" sx={{ mb: 2 }}>
-        <NextLink href="/admin/suppliers/newSupplier" passHref>
+        <NextLink href="/admin/suppliers/NewSupplier" passHref>
           <Button startIcon={<AddOutlined />} color="secondary">
             Crear proveedor
           </Button>

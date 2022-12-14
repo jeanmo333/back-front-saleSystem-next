@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../database";
 import { ISupplier } from "../../../interfaces";
@@ -34,7 +35,7 @@ const updateSupplier = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) => {
-  const { _id } = req.query;
+  const { _id="" } = req.query as { _id : string}
   const { name, rut, phone, email, web, address2, user, isActive } = req.body;
   {
     // if ([name, rut, phone, email, address2, user].includes("")) {
@@ -42,6 +43,20 @@ const updateSupplier = async (
     //     message: "Hay campo vacio",
     //   });
     // }
+
+
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      return res.status(400).json({
+        message: "proveedor no valido",
+      });
+    }
+
+
+    if (!mongoose.Types.ObjectId.isValid(user)) {
+      return res.status(400).json({
+        message: "usuario no valido",
+      });
+    }
 
     await db.connect();
     const supplier = await Supplier.findOne({ _id });
@@ -83,8 +98,16 @@ const deleteSupplier = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) => {
-  const { _id } = req.query;
+  const { _id="" } = req.query as { _id : string}
   {
+
+    
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      return res.status(400).json({
+        message: "proveedor no valido",
+      });
+    }
+
     await db.connect();
     const supplier = await Supplier.findOne({ _id });
     if (!supplier) {
@@ -104,8 +127,16 @@ const deleteSupplier = async (
 };
 
 const getSupplier = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  const { _id } = req.query;
+  const { _id="" } = req.query as { _id : string}
   {
+
+    
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      return res.status(400).json({
+        message: "proveedor no valido",
+      });
+    }
+
     await db.connect();
     const supplier = await Supplier.findOne({ _id });
     if (!supplier) {

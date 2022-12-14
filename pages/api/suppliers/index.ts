@@ -2,8 +2,9 @@ import type { NextApiRequest, NextApiResponse } from "next";
 
 import { db } from "../../../database";
 import console from "console";
-import {Supplier } from "../../../models";
+import {Supplier, User } from "../../../models";
 import { ISupplier } from "../../../interfaces";
+import mongoose from "mongoose";
 
 
 type Data = { message: string } | { supplierSave: ISupplier } | ISupplier[];
@@ -59,6 +60,13 @@ const registerSupplier = async (
 
   //const user  = getUser(token) as unknown as string;
 
+  if (!mongoose.Types.ObjectId.isValid(user)) {
+    return res.status(400).json({
+      message: "usuario no valida",
+    });
+  }
+
+
   await db.connect();
   const supplierName = await Supplier.findOne({ name });
   if (supplierName) {
@@ -97,6 +105,13 @@ const registerSupplier = async (
   if (supplierweb) {
     return res.status(400).json({
       message: "Web proveedor ya existe",
+    });
+  }
+
+  const supplierUser = await User.findOne({ _id: user });
+  if (!supplierUser) {
+    return res.status(400).json({
+      message: "usuario no existe",
     });
   }
 

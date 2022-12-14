@@ -4,49 +4,40 @@ import { useRouter } from "next/router";
 import Cookies from "js-cookie";
 import axios from "axios";
 
-import { AuthContext} from "./";
+import { AuthContext } from "./";
 
 import { amatecApi } from "../../api";
 import { IUser } from "../../interfaces";
-
-
 
 export const AuthProvider: FC = ({ children }) => {
   const router = useRouter();
 
   const [users, setUsers] = useState<IUser[]>([]);
   const [auth, setAuth] = useState<IUser>();
+  const [loading, setLoading] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
 
+  useEffect(() => {
+    checkToken();
+  }, []);
 
-
-    useEffect(() => {
-        checkToken();
-    }, [])
-
-
-
-
-  const checkToken = async() => {
-
-    if ( !Cookies.get('token') ) {
-        return;
+  const checkToken = async () => {
+    if (!Cookies.get("token")) {
+      return;
     }
 
     try {
-        const { data } = await amatecApi.get('/auth/validate-token');
-        const { token, user } = data;
-        Cookies.set('token', token );
-       setAuth(user)
-       //router.push("/admin");
+      const { data } = await amatecApi.get("/users/validate-token");
+      const { token, user } = data;
+      Cookies.set("token", token);
+      setAuth(user);
+      //router.push("/admin");
     } catch (error) {
-        Cookies.remove('token');
+      Cookies.remove("token");
     }
-}
-
+  };
 
   // useEffect(() => {
-
 
   //   const getUsers = async () => {
   //     const token = Cookies.get("token");
@@ -77,7 +68,7 @@ export const AuthProvider: FC = ({ children }) => {
   //   };
 
   //   userAuth(), getUsers();
-    
+
   // }, []);
 
   const loginUser = async (
@@ -85,7 +76,8 @@ export const AuthProvider: FC = ({ children }) => {
     password: string
   ): Promise<{ hasError: boolean; message?: string }> => {
     try {
-      const { data } = await amatecApi.post("/auth/login", {
+      setLoading(true);
+      const { data } = await amatecApi.post("/users/login", {
         email,
         password,
       });
@@ -93,6 +85,7 @@ export const AuthProvider: FC = ({ children }) => {
       Cookies.set("token", token);
       setAuth(user);
       setIsLoggedIn(true);
+      setLoading(false);
       return {
         hasError: false,
         message: data.message,
@@ -118,7 +111,7 @@ export const AuthProvider: FC = ({ children }) => {
     password: string
   ): Promise<{ hasError: boolean; message?: string }> => {
     try {
-      const { data } = await amatecApi.post("/auth/register", {
+      const { data } = await amatecApi.post("/users/register", {
         name,
         email,
         password,
@@ -146,7 +139,7 @@ export const AuthProvider: FC = ({ children }) => {
     email: string
   ): Promise<{ hasError: boolean; message?: string }> => {
     try {
-      const { data } = await amatecApi.post("/auth/forgetPassword", { email });
+      const { data } = await amatecApi.post("/users/forgetPassword", { email });
       return {
         hasError: false,
         message: data.message,
@@ -167,10 +160,9 @@ export const AuthProvider: FC = ({ children }) => {
   };
 
   const logout = () => {
-   // router.reload();
+    // router.reload();
     router.push("/");
     Cookies.remove("token");
-   
   };
 
   return (
@@ -179,14 +171,17 @@ export const AuthProvider: FC = ({ children }) => {
         auth,
         users,
         isLoggedIn,
+        loading,
 
         // Methods
+       setLoading,
+
         loginUser,
         checkToken,
         registerUser,
         logout,
         forgetPassword,
-       // navigateAdmin
+        // navigateAdmin
       }}>
       {children}
     </AuthContext.Provider>

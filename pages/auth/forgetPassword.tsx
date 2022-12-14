@@ -6,14 +6,14 @@ import { useContext, useState } from "react";
 import { validations } from "../../utils";
 import { AuthContext } from "../../context/auth";
 import { ErrorOutline } from "@mui/icons-material";
+import { useAuth } from "../../hooks";
 
 type FormData = {
   email: string;
 };
 
 const FogetPasswordPage = () => {
-
-  const {forgetPassword } = useContext(AuthContext);
+  const { loading, forgetPassword } = useAuth();
 
   const {
     register,

@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../database";
 import { ICategory } from "../../../interfaces";
@@ -35,9 +36,23 @@ const updateCategory = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) => {
-  const { _id } = req.query;
+  const { _id="" } = req.query as { _id : string}
   const { name, description, isActive,user } = req.body;
+
   {
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      return res.status(400).json({
+        message: "Categoria no valida",
+      });
+    }
+
+
+    if (!mongoose.Types.ObjectId.isValid(user)) {
+      return res.status(400).json({
+        message: "Usuario no valido",
+      });
+    }
+
     await db.connect();
     const category = await Category.findOne({ _id });
 
@@ -69,10 +84,19 @@ const deleteCategory = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) => {
-  const { _id } = req.query;
+  const { _id="" } = req.query as { _id : string}
   {
+
+    
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      return res.status(400).json({
+        message: "Categoria no valido",
+      });
+    }
+
     await db.connect();
     const category = await Category.findOne({ _id });
+
 
     if (!category) {
       return res.status(400).json({
@@ -93,8 +117,15 @@ const deleteCategory = async (
 };
 
 const getCategory = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  const { _id } = req.query;
+  const { _id="" } = req.query as { _id : string}
   {
+
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      return res.status(400).json({
+        message: "Categoria no valido",
+      });
+    }
+
     await db.connect();
     const category = await Category.findOne({ _id });
     await db.disconnect();

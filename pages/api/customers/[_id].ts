@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import type { NextApiRequest, NextApiResponse } from "next";
 import { db } from "../../../database";
 import { ICustomer } from "../../../interfaces";
@@ -34,9 +35,24 @@ const updateCustomer = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) => {
-  const { _id } = req.query;
+  const { _id="" } = req.query as { _id : string}
   const { name, rut, phone, email, web, address2, user, isActive } = req.body;
   {
+
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      return res.status(400).json({
+        message: "Usuario no valido",
+      });
+    }
+
+    if (!mongoose.Types.ObjectId.isValid(user)) {
+      return res.status(400).json({
+        message: "Usuario no valido",
+      });
+    }
+
+
+  
     await db.connect();
     const customer = await Customer.findOne({ _id });
     if (!customer) {
@@ -71,8 +87,15 @@ const deleteCustomer = async (
   req: NextApiRequest,
   res: NextApiResponse<Data>
 ) => {
-  const { _id } = req.query;
+  const { _id="" } = req.query as { _id : string}
   {
+
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      return res.status(400).json({
+        message: "Cliente no valido",
+      });
+    }
+
     await db.connect();
     const customer = await Customer.findOne({ _id });
 
@@ -93,8 +116,15 @@ const deleteCustomer = async (
 };
 
 const getCustomer = async (req: NextApiRequest, res: NextApiResponse<Data>) => {
-  const { _id } = req.query;
+  const { _id="" } = req.query as { _id : string}
   {
+
+    if (!mongoose.Types.ObjectId.isValid(_id)) {
+      return res.status(400).json({
+        message: "Cliente no valido",
+      });
+    }
+    
     await db.connect();
     const customer = await Customer.findOne({ _id });
     await db.disconnect();

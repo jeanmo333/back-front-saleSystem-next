@@ -16,7 +16,7 @@ type FormData = {
   address2: string;
 };
 
-const newSupplier = () => {
+const NewSupplier = () => {
   const router = useRouter();
   const { registerSupplier } = useSuppliers();
 
@@ -189,4 +189,4 @@ const newSupplier = () => {
   );
 };
 
-export default newSupplier;
+export default NewSupplier;

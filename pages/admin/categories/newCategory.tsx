@@ -13,7 +13,7 @@ type FormData = {
   description: string;
 };
 
-const newCategory = () => {
+const NewCategory = () => {
   const router = useRouter();
   const { registerCategory } = useCategories();
 
@@ -110,4 +110,4 @@ const newCategory = () => {
   );
 };
 
-export default newCategory;
+export default NewCategory;

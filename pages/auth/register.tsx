@@ -17,6 +17,7 @@ import { ErrorOutline } from "@mui/icons-material";
 import { AuthContext } from "../../context/auth";
 import { AuthLayout } from "../../components/layouts";
 import { validations } from "../../utils";
+import { useAuth } from "../../hooks";
 
 
 type FormData = {
@@ -26,7 +27,7 @@ type FormData = {
 };
 
 const RegisterPage = () => {
-  const { registerUser } = useContext(AuthContext);
+  const { loading, registerUser } = useAuth();
   const [showError, setShowError] = useState(false);
   const [showSuccess, setShowSuccess] = useState(false);
   const [messageError, setMessageError] = useState("");

@@ -60,7 +60,7 @@ const CategoryPage = () => {
       subTitle="Gestionar Categorias"
       icon={<Category />}>
       <Box display="flex" justifyContent="end" sx={{ mb: 2 }}>
-        <NextLink href="/admin/categories/newCategory" passHref>
+        <NextLink href="/admin/categories/NewCategory" passHref>
           <Button startIcon={<AddOutlined />} color="secondary">
             Crear categoria
           </Button>
